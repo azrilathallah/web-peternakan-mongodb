@@ -53,14 +53,4 @@ class Login extends BaseLogin
             'data.password' => 'Password salah.',
         ]);
     }
-
-    protected function hasLoginRateLimiting(): bool
-    {
-        return false;
-    }
-
-    protected function getRateLimiter(): ?string
-    {
-        return null;
-    }
 }
