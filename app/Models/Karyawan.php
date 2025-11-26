@@ -12,7 +12,6 @@ class Karyawan extends Authenticatable implements HasName
 
     protected $connection = 'mongodb';
     protected $collection = 'karyawan';
-    protected $table = 'karyawan';
 
     protected $fillable = ['nama', 'username', 'password'];
     protected $hidden = ['password'];

@@ -9,9 +9,5 @@ class Kandang extends Model
     protected $connection = 'mongodb';
     protected $collection = 'kandang';
 
-    protected $fillable = [
-        'lokasi',
-        'kapasitas', 
-        'jumlah_puyuh',
-    ];
+    protected $fillable = ['lokasi', 'kapasitas', 'jumlah_puyuh'];
 }
