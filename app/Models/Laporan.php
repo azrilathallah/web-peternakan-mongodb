@@ -13,4 +13,8 @@ class Laporan extends Model
         'periode',
         'data_laporan',
     ];
+
+    protected $casts = [
+        'data_laporan' => 'array',
+    ];
 }
