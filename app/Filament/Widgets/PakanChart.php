@@ -42,7 +42,7 @@ class PakanChart extends ChartWidget
                     'barPercentage' => 0.6,
                 ]
             ],
-            'labels' => $data->pluck('tanggal')->map(function ($date) {
+            'labels' => $data->pluck('_id')->map(function ($date) {
                 return Carbon::parse($date)->format('d M');
             }),
         ];

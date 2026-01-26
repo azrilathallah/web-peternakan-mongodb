@@ -44,7 +44,7 @@ class ProduksiTelurChart extends ChartWidget
                     'fill' => true,
                 ],
             ],
-            'labels' => $data->pluck('tanggal')->map(function ($date) {
+            'labels' => $data->pluck('_id')->map(function ($date) {
                 return Carbon::parse($date)->format('d M');
             }),
         ];
