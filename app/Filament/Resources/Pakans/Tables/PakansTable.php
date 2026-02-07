@@ -50,6 +50,7 @@ class PakansTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated(false);
     }
 }

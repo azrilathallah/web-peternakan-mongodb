@@ -36,6 +36,7 @@ class KandangsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([]),
-            ]);
+            ])
+            ->paginated(false);
     }
 }

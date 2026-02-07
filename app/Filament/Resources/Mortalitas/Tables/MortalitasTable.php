@@ -44,6 +44,7 @@ class MortalitasTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated(false);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Kandang;
 use App\Models\Mortalitas;
 use App\Models\Pakan;
 use App\Models\ProduksiTelur;
+use App\Traits\MeasuresPerformance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -16,10 +17,14 @@ use Illuminate\Support\Facades\Storage;
 
 class CreateLaporan extends CreateRecord
 {
+    use MeasuresPerformance;
+
     protected static string $resource = LaporanResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $this->startPerformanceMeasurement();
+
         // Generate data laporan
         $laporanData = $this->collectReportData($data);
 
@@ -66,6 +71,10 @@ class CreateLaporan extends CreateRecord
                     ->label('Download PDF'),
             ])
             ->send();
+
+        // Log performance metrics
+        $result = $this->endPerformanceMeasurement('CREATE', 'Laporan');
+        // $this->showPerformanceNotification($result);
     }
 
     protected function getRedirectUrl(): string

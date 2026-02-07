@@ -58,6 +58,7 @@ class ProduksiTelursTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated(false);
     }
 }

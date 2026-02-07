@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Eloquent\Model;
 
 class ProduksiTelur extends Model
 {
+    use HasFactory;
     protected $connection = 'mongodb';
     protected $collection = 'produksi_telur';
 
