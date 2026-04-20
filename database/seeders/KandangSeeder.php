@@ -15,14 +15,14 @@ class KandangSeeder extends Seeder
         if (Kandang::count() == 0) {
             Kandang::create([
                 'lokasi' => 'Kandang Atas',
-                'kapasitas' => 0,
-                'jumlah_puyuh' => 0,
+                'kapasitas' => 6000,
+                'jumlah_puyuh' => 5851,
             ]);
 
             Kandang::create([
                 'lokasi' => 'Kandang Bawah',
-                'kapasitas' => 0,
-                'jumlah_puyuh' => 0,
+                'kapasitas' => 6000,
+                'jumlah_puyuh' => 5642,
             ]);
         }
     }

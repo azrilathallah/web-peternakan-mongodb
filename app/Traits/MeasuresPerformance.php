@@ -8,27 +8,31 @@ trait MeasuresPerformance
 {
     protected float $performanceStartTime;
     protected int $performanceStartMemory;
+    protected array $performanceStartUsage; 
 
-    /**
-     * Mulai pengukuran performa
-     */
     protected function startPerformanceMeasurement(): void
     {
         $this->performanceStartTime = microtime(true);
         $this->performanceStartMemory = memory_get_usage();
+        $this->performanceStartUsage = getrusage(); 
     }
 
-    /**
-     * Akhiri pengukuran dan log hasilnya
-     */
     protected function endPerformanceMeasurement(string $operation, string $model): array
     {
         $endTime = microtime(true);
         $endMemory = memory_get_usage();
-        $peakMemory = memory_get_peak_usage();
+        $endUsage = getrusage(); 
 
         $executionTimeMs = ($endTime - $this->performanceStartTime) * 1000;
         $memoryUsed = $endMemory - $this->performanceStartMemory;
+
+        $startTotalMicro = ($this->performanceStartUsage["ru_utime.tv_sec"] + $this->performanceStartUsage["ru_stime.tv_sec"]) * 1e6 
+                         + $this->performanceStartUsage["ru_utime.tv_usec"] + $this->performanceStartUsage["ru_stime.tv_usec"];
+        
+        $endTotalMicro = ($endUsage["ru_utime.tv_sec"] + $endUsage["ru_stime.tv_sec"]) * 1e6 
+                       + $endUsage["ru_utime.tv_usec"] + $endUsage["ru_stime.tv_usec"];
+        
+        $cpuTimeMs = ($endTotalMicro - $startTotalMicro) / 1000; 
 
         $result = [
             'timestamp' => now()->format('Y-m-d H:i:s'),
@@ -36,21 +40,16 @@ trait MeasuresPerformance
             'model' => $model,
             'execution_time_ms' => round($executionTimeMs, 4),
             'memory_usage_mb' => round($memoryUsed / 1024 / 1024, 4),
-            'memory_peak_mb' => round($peakMemory / 1024 / 1024, 4),
+            'cpu_time_ms' => round($cpuTimeMs, 4), 
         ];
 
-        // Log ke file CSV
         $this->logPerformanceToCSV($result);
 
-        // Log ke Laravel log
         Log::channel('single')->info("CRUD Performance: {$operation} {$model}", $result);
 
         return $result;
     }
 
-    /**
-     * Simpan hasil pengukuran ke file CSV
-     */
     protected function logPerformanceToCSV(array $data): void
     {
         $logDir = storage_path('logs/performance');
@@ -65,9 +64,8 @@ trait MeasuresPerformance
         $fileExists = file_exists($filePath);
         $file = fopen($filePath, 'a');
 
-        // Tulis header jika file baru
         if (!$fileExists) {
-            fputcsv($file, ['timestamp', 'operation', 'model', 'execution_time_ms', 'memory_usage_mb', 'memory_peak_mb']);
+            fputcsv($file, ['timestamp', 'operation', 'model', 'execution_time_ms', 'memory_usage_mb', 'cpu_time_ms']);
         }
 
         fputcsv($file, [
@@ -76,38 +74,9 @@ trait MeasuresPerformance
             $data['model'],
             $data['execution_time_ms'],
             $data['memory_usage_mb'],
-            $data['memory_peak_mb'],
+            $data['cpu_time_ms'], 
         ]);
 
         fclose($file);
     }
-
-    /**
-     * Format memory ke MB
-     */
-    protected function formatToMB(float $mb): string
-    {
-        return sprintf("%.4f MB", $mb);
-    }
-
-    /**
-     * Tampilkan notifikasi performance
-     */
-    // protected function showPerformanceNotification(array $result): void
-    // {
-    //     $message = sprintf(
-    //         '%s %s - Waktu: %.4f ms | Memori: %s',
-    //         $result['operation'],
-    //         $result['model'],
-    //         $result['execution_time_ms'],
-    //         $this->formatToMB($result['memory_usage_mb'])
-    //     );
-
-    //     \Filament\Notifications\Notification::make()
-    //         ->title('Performance Metrics')
-    //         ->body($message)
-    //         ->info()
-    //         ->duration(5000)
-    //         ->send();
-    // }
 }
